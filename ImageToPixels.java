@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class ImageToPixels {
+    public static int height;
+    public static int width;
+
     public static int[][] readImage(String filePath) {
         File file = new File(filePath);
         BufferedImage image;
@@ -17,12 +20,12 @@ public class ImageToPixels {
             e.printStackTrace();
             return null;
         }
-        int imgWidth = image.getWidth();
-        int imgHeight = image.getHeight();
-        int[][] pixels = new int[imgHeight][imgWidth];
-        for (int x = 0; x < imgWidth; x++)
+        width = image.getWidth();
+        height = image.getHeight();
+        int[][] pixels = new int[height][width];
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < imgHeight; y++)
+            for (int y = 0; y < height; y++)
             {
                 int p = image.getRGB(x,y);
                 int a = (p>>24)&0xff;
@@ -39,12 +42,12 @@ public class ImageToPixels {
                 image.setRGB(x, y, p);
             }
         }
-        Vector<Integer> imgData = new Vector<>(imgWidth * imgHeight);
-        imgData.add(imgHeight);
-        imgData.add(imgWidth);
-        for (int x = 0; x < imgHeight; x++)
+        Vector<Integer> imgData = new Vector<>(width* height);
+        imgData.add(height);
+        imgData.add(width);
+        for (int x = 0; x < height; x++)
         {
-            for (int y = 0; y < imgWidth; y++)
+            for (int y = 0; y < width; y++)
             {
                 imgData.add(pixels[x][y]);
             }
@@ -87,14 +90,16 @@ public class ImageToPixels {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(int i = 0;i<340;i++){
+        /*for(int i = 0;i<340;i++){
             for(int j = 0;j<510;j++){
                 System.out.print(imagePixels[i][j]+" ");
                 //System.out.println(j+1);
             }
+
             //System.out.println(i+1);
             System.out.println("/////////////////////////////////////////");
-        }
+        }*/
+
     }
 
 }
