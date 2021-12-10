@@ -78,7 +78,8 @@ public class ImageToPixels {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*for(int i = 0;i<170;i++){
+        /*System.out.println("Start");
+        for(int i = 0;i<170;i++){
             for(int j = 0;j<220;j++){
                 System.out.print(imagePixels[i][j]+" ");
                 //System.out.println(j+1);

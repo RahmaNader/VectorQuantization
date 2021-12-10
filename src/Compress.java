@@ -47,6 +47,7 @@ public class Compress {
         for (Vector<int[][]> vector : Vectors ) {
             VectorsToQuantizedIndices.add(new Vector<>());
             for (int[][] myVector : vector){
+                float[][] mah = Quantized.get(0);
                 float smallestDistance = distance(myVector, Quantized.get(0),0);
                 int smallestIndex = 0;
                 //Find the minimum Distance

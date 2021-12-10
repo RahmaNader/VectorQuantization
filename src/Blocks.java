@@ -9,25 +9,24 @@ public class Blocks {
     static int scaledWidth;
     public static Vector<Vector<int[][]>> scale(int vectorHeight, int vectorWidth, String path){
         int[][] image = ImageToPixels.readImage(path);
-        int imageHeight = ImageToPixels.height;
-        int imageWidth = ImageToPixels.width;
-        int scaledHeight , scaledWidth;
-        if(imageHeight % vectorHeight == 0){
-            scaledHeight = imageHeight;
+        originalHeight = ImageToPixels.height;
+        originalWidth = ImageToPixels.width;
+        if(originalHeight % vectorHeight == 0){
+            scaledHeight = originalHeight;
         }else{
-            scaledHeight = ((imageHeight / vectorHeight) + 1) * vectorHeight;
+            scaledHeight = ((originalHeight / vectorHeight) + 1) * vectorHeight;
         }
-        if(imageWidth % vectorWidth == 0){
-            scaledWidth = imageWidth;
+        if(originalWidth % vectorWidth == 0){
+            scaledWidth = originalWidth;
         }else{
-            scaledWidth = ((imageWidth / vectorWidth) + 1) * vectorWidth;
+            scaledWidth = ((originalWidth / vectorWidth) + 1) * vectorWidth;
         }
 
         int[][] scaledImage = new int[scaledHeight][scaledWidth];
         for (int i = 0; i < scaledHeight; i++) {
-            int x = i >= imageHeight ? imageHeight - 1 : i;
+            int x = i >= originalHeight ? originalHeight - 1 : i;
             for (int j = 0; j < scaledWidth; j++) {
-                int y = j >= imageWidth ? imageWidth - 1 : j;
+                int y = j >= originalWidth ? originalWidth - 1 : j;
                 scaledImage[i][j] = image[x][y];
             }
         }
