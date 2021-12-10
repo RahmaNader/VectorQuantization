@@ -47,7 +47,6 @@ public class Compress {
         for (Vector<int[][]> vector : Vectors ) {
             VectorsToQuantizedIndices.add(new Vector<>());
             for (int[][] myVector : vector){
-                float[][] mah = Quantized.get(0);
                 float smallestDistance = distance(myVector, Quantized.get(0),0);
                 int smallestIndex = 0;
                 //Find the minimum Distance
@@ -70,8 +69,9 @@ public class Compress {
     private static void quantization(int Level, Vector<Vector<int[][]>> blocks, Vector<float[][]> q) {
 
         if(Level == 1 || blocks.size() == 0) {
-            if(blocks.size() > 0)
+            if(blocks.size() > 0 & !blocks.get(0).isEmpty())
                 q.add(blockAverage(blocks));
+
             return;
         }
         //Split
