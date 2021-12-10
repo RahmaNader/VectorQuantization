@@ -7,18 +7,19 @@ public class Blocks {
     static int originalWidth;
     static int scaledHeight;
     static int scaledWidth;
-    public static Vector<Vector<int[][]>> scale(int vectorHeight, int vectorWidth, String path){
+
+    public static Vector<Vector<int[][]>> scale(int vectorHeight, int vectorWidth, String path) {
         int[][] image = ImageToPixels.readImage(path);
         originalHeight = ImageToPixels.height;
         originalWidth = ImageToPixels.width;
-        if(originalHeight % vectorHeight == 0){
+        if (originalHeight % vectorHeight == 0) {
             scaledHeight = originalHeight;
-        }else{
+        } else {
             scaledHeight = ((originalHeight / vectorHeight) + 1) * vectorHeight;
         }
-        if(originalWidth % vectorWidth == 0){
+        if (originalWidth % vectorWidth == 0) {
             scaledWidth = originalWidth;
-        }else{
+        } else {
             scaledWidth = ((originalWidth / vectorWidth) + 1) * vectorWidth;
         }
 
@@ -27,21 +28,23 @@ public class Blocks {
             int x = i >= originalHeight ? originalHeight - 1 : i;
             for (int j = 0; j < scaledWidth; j++) {
                 int y = j >= originalWidth ? originalWidth - 1 : j;
-                scaledImage[i][j] = image[x][y];
+                if (image != null) {
+                    scaledImage[i][j] = image[x][y];
+                }
             }
         }
-        return split(scaledImage, scaledHeight, scaledWidth,vectorHeight, vectorWidth);
+        return split(scaledImage, scaledHeight, scaledWidth, vectorHeight, vectorWidth);
     }
 
-    public static Vector<Vector<int[][]>> split(int[][] bits, int scaledHeight, int scaledWidth , int vectorHeight, int vectorWidth){
+    public static Vector<Vector<int[][]>> split(int[][] bits, int scaledHeight, int scaledWidth, int vectorHeight, int vectorWidth) {
         Vector<Vector<int[][]>> blocks = new Vector<>();
-        for (int i = 0; i < scaledHeight; i+= vectorHeight){
+        for (int i = 0; i < scaledHeight; i += vectorHeight) {
             blocks.add(new Vector<>());
-            for(int j=0; j < scaledWidth; j+= vectorWidth){
+            for (int j = 0; j < scaledWidth; j += vectorWidth) {
                 int[][] e = new int[vectorHeight][vectorWidth];
-                for (int y=i; y< i + vectorHeight ; y++){
-                    for (int x=j; x < j + vectorWidth ; x++){
-                        e[y%vectorHeight][x%vectorWidth] = bits[y][x];
+                for (int y = i; y < i + vectorHeight; y++) {
+                    for (int x = j; x < j + vectorWidth; x++) {
+                        e[y % vectorHeight][x % vectorWidth] = bits[y][x];
                     }
                 }
                 blocks.lastElement().add(e);

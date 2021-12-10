@@ -3,16 +3,19 @@ package src;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.sql.Time;
+import java.time.Instant;
 import java.util.Vector;
+
 public class Compress {
 
     public static void compress() throws IOException {
-        int h = Main.vectorHeight;
-        int w = Main.vectorWidth;
-        int codeBookSize = Main.codeBookSize;
-        String path = Main.path;
+        int h = GUI.vectorHeight;
+        int w = GUI.vectorWidth;
+        int codeBookSize = GUI.codeBookSize;
+        String path = GUI.path;
         Vector<Vector<int[][]>> vectors;
-        vectors = Blocks.scale(h,w,path);
+        vectors = Blocks.scale(h, w, path);
         Vector<float[][]> Quantized = new Vector<>();
 
         //Fill Quantized Vector (The recursive part)
@@ -21,7 +24,7 @@ public class Compress {
         Vector<Vector<Integer>> VectorsToQuantizedIndices = encode(vectors, Quantized);
 
         //Write using Java's Object Serialization
-        FileOutputStream fileOutputStream = new FileOutputStream("text.txt");
+        FileOutputStream fileOutputStream = new FileOutputStream(GUI.compressPath);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
         //Write To Compressed File
@@ -39,26 +42,24 @@ public class Compress {
 
     //Optimize
 
-    public static Vector<Vector<Integer>> encode(Vector<Vector<int[][]>> Vectors, Vector<float[][]> Quantized)
-    {
+    public static Vector<Vector<Integer>> encode(Vector<Vector<int[][]>> Vectors, Vector<float[][]> Quantized) {
         Vector<Vector<Integer>> VectorsToQuantizedIndices = new Vector<>();
 
-        int j =0;
-        for (Vector<int[][]> vector : Vectors ) {
+        int j = 0;
+        for (Vector<int[][]> vector : Vectors) {
             VectorsToQuantizedIndices.add(new Vector<>());
-            for (int[][] myVector : vector){
-                float smallestDistance = distance(myVector, Quantized.get(0),0);
+            for (int[][] myVector : vector) {
+                float smallestDistance = distance(myVector, Quantized.get(0), 0);
                 int smallestIndex = 0;
                 //Find the minimum Distance
                 for (int i = 1; i < Quantized.size(); i++) {
-                    float tempDistance = distance(myVector, Quantized.get(i),0);
-                    if(tempDistance < smallestDistance)
-                    {
+                    float tempDistance = distance(myVector, Quantized.get(i), 0);
+                    if (tempDistance < smallestDistance) {
                         smallestDistance = tempDistance;
                         smallestIndex = i;
                     }
                 }
-                //Map the i'th Vector to the [i] in Quantized
+                //Map the ith Vector to the [i] in Quantized
                 VectorsToQuantizedIndices.get(j).add(smallestIndex);
             }
             j++;
@@ -68,15 +69,15 @@ public class Compress {
 
     private static void quantization(int Level, Vector<Vector<int[][]>> blocks, Vector<float[][]> q) {
 
-        if(Level == 1 || blocks.size() == 0) {
-            if(blocks.size() > 0 & !blocks.get(0).isEmpty())
+        if (Level == 1 || blocks.size() == 0) {
+            if (blocks.size() > 0 & !blocks.get(0).isEmpty())
                 q.add(blockAverage(blocks));
 
             return;
         }
         //Split
         Vector<Vector<int[][]>> left = new Vector<>();
-        Vector<Vector<int[][]>> right =  new Vector<>();
+        Vector<Vector<int[][]>> right = new Vector<>();
 
         left.add(new Vector<>());
         right.add(new Vector<>());
@@ -84,9 +85,9 @@ public class Compress {
         float[][] avg = blockAverage(blocks);
 
         //Calculate Euclidean Distance
-        for (Vector<int[][]> block : blocks ) {
+        for (Vector<int[][]> block : blocks) {
             {
-                for(int[][] myVector : block){
+                for (int[][] myVector : block) {
                     float leftBranch = distance(myVector, avg, -1);
                     float rightBranch = distance(myVector, avg, 1);
                     //Add To Right OR Left Vector
@@ -105,8 +106,8 @@ public class Compress {
 
     private static float distance(int[][] currBlock, float[][] avg, int branch) {
         float distance = 0;
-        for (int i = 0; i < Main.vectorHeight; i++){
-            for (int j=0; j < Main.vectorWidth; j++){
+        for (int i = 0; i < GUI.vectorHeight; i++) {
+            for (int j = 0; j < GUI.vectorWidth; j++) {
                 distance += Math.pow(currBlock[i][j] - avg[i][j] + branch, 2);
             }
         }
@@ -115,21 +116,21 @@ public class Compress {
 
     public static float[][] blockAverage(Vector<Vector<int[][]>> blocks) {
 
-        int vectorHeight = Main.vectorHeight;
-        int vectorWidth = Main.vectorWidth;
+        int vectorHeight = GUI.vectorHeight;
+        int vectorWidth = GUI.vectorWidth;
         float[][] average = new float[vectorHeight][vectorWidth];
-        for (int y =0; y < blocks.size(); y++){
-            for (int x=0; x < blocks.get(y).size(); x++){
-                for (int i =0; i < vectorHeight; i++){
-                    for (int j=0; j < vectorWidth; j++){
-                        average[i][j] += (blocks.get(y).get(x))[i][j];
+        for (Vector<int[][]> block : blocks) {
+            for (int[][] ints : block) {
+                for (int i = 0; i < vectorHeight; i++) {
+                    for (int j = 0; j < vectorWidth; j++) {
+                        average[i][j] += ints[i][j];
                     }
                 }
             }
         }
-        for (int i =0; i < vectorHeight; i++){
-            for (int j =0; j < vectorWidth; j++){
-                average[i][j] /= blocks.size()*blocks.get(0).size();
+        for (int i = 0; i < vectorHeight; i++) {
+            for (int j = 0; j < vectorWidth; j++) {
+                average[i][j] /= blocks.size() * blocks.get(0).size();
             }
         }
         return average;
