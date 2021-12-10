@@ -1,3 +1,5 @@
+package src;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -62,7 +64,6 @@ public class ImageToPixels {
             for (int x = 0; x < width; x++) {
                 int value = -1 << 24;
                 value = 0xff000000 | ((imagePixels[y][x] & 0xff) << 16) | ((imagePixels[y][x] & 0xff) << 8) | (imagePixels[y][x] & 0xff);
-                //0xff000000 | (imagePixels[y][x] << 16) | (imagePixels[y][x] << 8) | (imagePixels[y][x]);
                 image.setRGB(x, y, value);
             }
         }
@@ -77,7 +78,7 @@ public class ImageToPixels {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(int i = 0;i<170;i++){
+        /*for(int i = 0;i<170;i++){
             for(int j = 0;j<220;j++){
                 System.out.print(imagePixels[i][j]+" ");
                 //System.out.println(j+1);
@@ -85,7 +86,7 @@ public class ImageToPixels {
 
             //System.out.println(i+1);
             System.out.println("/////////////////////////////////////////");
-        }
+        }*/
 
     }
 
