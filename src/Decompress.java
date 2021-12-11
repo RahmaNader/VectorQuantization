@@ -1,8 +1,6 @@
 package src;
 
 import java.io.*;
-import java.sql.Time;
-import java.time.Instant;
 import java.util.Vector;
 
 public class Decompress {
@@ -25,10 +23,8 @@ public class Decompress {
 
         int xAxis, yAxis;
         for (int i = 0; i < vectorsToOptimizeIndices.size(); i++) {
-            //yAxis = i * vectorHeight;
             for (int j = 0; j < vectorsToOptimizeIndices.get(i).size(); j++) {
                 yAxis = i * vectorHeight;
-                Quantized.get(vectorsToOptimizeIndices.get(i).get(j));
                 float[][] temp = Quantized.get(vectorsToOptimizeIndices.get(i).get(j));
                 for (int y = 0; y < vectorHeight; y++) {
                     xAxis = j * vectorWidth;

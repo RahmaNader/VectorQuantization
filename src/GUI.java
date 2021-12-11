@@ -8,9 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.Time;
-import java.time.Instant;
 
 public class GUI extends Component implements ActionListener {
     public static int vectorHeight;
@@ -111,19 +108,19 @@ public class GUI extends Component implements ActionListener {
             vectorHeight = Integer.parseInt(hInput.getText());
             vectorWidth = Integer.parseInt(wInput.getText());
             codeBookSize = Integer.parseInt(cbInput.getText());
-            decompressPath = GUI.path + "_" + GUI.vectorWidth + "_" + GUI.vectorHeight + "_" + GUI.codeBookSize + Time.from(Instant.now()) + ".jpg";
-            compressPath = GUI.path + "_" + GUI.vectorWidth + "_" + GUI.vectorHeight + "_" + GUI.codeBookSize + Time.from(Instant.now()) + ".txt";
+            decompressPath = GUI.path + "_" + GUI.vectorWidth + "_" + GUI.vectorHeight + "_" + GUI.codeBookSize+ ".jpg";
+            compressPath = GUI.path + "_" + GUI.vectorWidth + "_" + GUI.vectorHeight + "_" + GUI.codeBookSize+ ".txt";
             File f = new File(path);
             try {
                 Compress.compress();
-                before.setText(before.getText()+getFileSizeKiloBytes(f));
+                before.setText("Size before: "+getFileSizeKiloBytes(f));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
             try {
                 Decompress.decompress();
                 f = new File(decompressPath);
-                after.setText(after.getText()+getFileSizeKiloBytes(f));
+                after.setText("Size after: "+getFileSizeKiloBytes(f));
             } catch (IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }

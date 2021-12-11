@@ -3,40 +3,34 @@ package src;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.sql.Time;
-import java.time.Instant;
 import java.util.Vector;
 
 public class Compress {
-
+    public static float[][] blockAvg;
     public static void compress() throws IOException {
-        int h = GUI.vectorHeight;
-        int w = GUI.vectorWidth;
-        int codeBookSize = GUI.codeBookSize;
-        String path = GUI.path;
-        Vector<Vector<int[][]>> vectors;
-        vectors = Blocks.scale(h, w, path);
+        Vector<Vector<int[][]>> blocks;
+        blocks = Blocks.scale(GUI.vectorHeight, GUI.vectorWidth, GUI.path);
         Vector<float[][]> Quantized = new Vector<>();
 
         //Fill Quantized Vector (The recursive part)
-        quantization(codeBookSize, vectors, Quantized);
+        quantization(GUI.codeBookSize, blocks, Quantized);
 
-        Vector<Vector<Integer>> VectorsToQuantizedIndices = encode(vectors, Quantized);
+        Vector<Vector<Integer>> VectorsToQuantizedIndices = encode(blocks, Quantized);
 
         //Write using Java's Object Serialization
-        FileOutputStream fileOutputStream = new FileOutputStream(GUI.compressPath);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        FileOutputStream fileStream = new FileOutputStream(GUI.compressPath);
+        ObjectOutputStream stream = new ObjectOutputStream(fileStream);
 
         //Write To Compressed File
-        objectOutputStream.writeObject(Blocks.originalWidth);
-        objectOutputStream.writeObject(Blocks.originalHeight);
-        objectOutputStream.writeObject(Blocks.scaledWidth);
-        objectOutputStream.writeObject(Blocks.scaledHeight);
-        objectOutputStream.writeObject(w);
-        objectOutputStream.writeObject(h);
-        objectOutputStream.writeObject(VectorsToQuantizedIndices);
-        objectOutputStream.writeObject(Quantized);
-        objectOutputStream.close();
+        stream.writeObject(Blocks.originalWidth);
+        stream.writeObject(Blocks.originalHeight);
+        stream.writeObject(Blocks.scaledWidth);
+        stream.writeObject(Blocks.scaledHeight);
+        stream.writeObject(GUI.vectorWidth);
+        stream.writeObject(GUI.vectorHeight);
+        stream.writeObject(VectorsToQuantizedIndices);
+        stream.writeObject(Quantized);
+        stream.close();
     }
 
 
@@ -44,7 +38,6 @@ public class Compress {
 
     public static Vector<Vector<Integer>> encode(Vector<Vector<int[][]>> Vectors, Vector<float[][]> Quantized) {
         Vector<Vector<Integer>> VectorsToQuantizedIndices = new Vector<>();
-
         int j = 0;
         for (Vector<int[][]> vector : Vectors) {
             VectorsToQuantizedIndices.add(new Vector<>());
@@ -67,11 +60,11 @@ public class Compress {
         return VectorsToQuantizedIndices;
     }
 
-    private static void quantization(int Level, Vector<Vector<int[][]>> blocks, Vector<float[][]> q) {
-
-        if (Level == 1 || blocks.size() == 0) {
+    private static void quantization(int range, Vector<Vector<int[][]>> blocks, Vector<float[][]> q) {
+        blockAvg = blockAverage(blocks);
+        if (range == 1 || blocks.size() == 0) {
             if (blocks.size() > 0 & !blocks.get(0).isEmpty())
-                q.add(blockAverage(blocks));
+                q.add(blockAvg);
 
             return;
         }
@@ -81,15 +74,13 @@ public class Compress {
 
         left.add(new Vector<>());
         right.add(new Vector<>());
-        //Calculate Average Vector
-        float[][] avg = blockAverage(blocks);
 
         //Calculate Euclidean Distance
         for (Vector<int[][]> block : blocks) {
             {
                 for (int[][] myVector : block) {
-                    float leftBranch = distance(myVector, avg, -1);
-                    float rightBranch = distance(myVector, avg, 1);
+                    float leftBranch = distance(myVector, blockAvg, -1);
+                    float rightBranch = distance(myVector, blockAvg, 1);
                     //Add To Right OR Left Vector
                     if (leftBranch < rightBranch)
                         left.get(0).add(myVector);
@@ -100,8 +91,8 @@ public class Compress {
         }
 
         //Recurse
-        quantization(Level / 2, left, q);
-        quantization(Level / 2, right, q);
+        quantization(range / 2, left, q);
+        quantization(range / 2, right, q);
     }
 
     private static float distance(int[][] currBlock, float[][] avg, int branch) {
@@ -115,21 +106,18 @@ public class Compress {
     }
 
     public static float[][] blockAverage(Vector<Vector<int[][]>> blocks) {
-
-        int vectorHeight = GUI.vectorHeight;
-        int vectorWidth = GUI.vectorWidth;
-        float[][] average = new float[vectorHeight][vectorWidth];
+        float[][] average = new float[GUI.vectorHeight][GUI.vectorWidth];
         for (Vector<int[][]> block : blocks) {
             for (int[][] ints : block) {
-                for (int i = 0; i < vectorHeight; i++) {
-                    for (int j = 0; j < vectorWidth; j++) {
+                for (int i = 0; i < GUI.vectorHeight; i++) {
+                    for (int j = 0; j < GUI.vectorWidth; j++) {
                         average[i][j] += ints[i][j];
                     }
                 }
             }
         }
-        for (int i = 0; i < vectorHeight; i++) {
-            for (int j = 0; j < vectorWidth; j++) {
+        for (int i = 0; i < GUI.vectorHeight; i++) {
+            for (int j = 0; j < GUI.vectorWidth; j++) {
                 average[i][j] /= blocks.size() * blocks.get(0).size();
             }
         }
